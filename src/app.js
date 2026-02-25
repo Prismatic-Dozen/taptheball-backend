@@ -4,8 +4,12 @@ const cors = require("cors");
 const authRoutes = require("./auth/auth.routes");
 const scoreRoutes = require("./score/score.routes");
 const leaderboardRoutes = require("./leaderboard/leaderboard.routes");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger.config");
 
 const app = express();
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(cors());
 app.use(express.json());
