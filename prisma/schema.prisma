@@ -9,13 +9,12 @@ datasource db {
 
 model User {
   id         String   @id @default(uuid())
-  googleId   String   @unique
-  name       String
-  email      String
+  playerId   String   @unique
+  name       String?
   avatarUrl  String?
   createdAt  DateTime @default(now())
 
-  score Score?
+  score      Score?
 }
 
 model Score {

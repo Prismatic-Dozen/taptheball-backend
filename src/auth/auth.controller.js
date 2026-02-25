@@ -1,6 +1,6 @@
-const { loginWithGoogle } = require("./auth.service");
+const { loginWithPlayGames } = require("./auth.service");
 
-async function googleAuth(req, res) {
+async function playGamesAuth(req, res) {
     try {
         const { idToken } = req.body;
 
@@ -8,7 +8,7 @@ async function googleAuth(req, res) {
             return res.status(400).json({ error: "Missing idToken" });
         }
 
-        const result = await loginWithGoogle(idToken);
+        const result = await loginWithPlayGames(idToken);
 
         res.json(result);
     } catch (error) {
@@ -17,4 +17,4 @@ async function googleAuth(req, res) {
     }
 }
 
-module.exports = { googleAuth };
+module.exports = { playGamesAuth };

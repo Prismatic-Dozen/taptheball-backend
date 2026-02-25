@@ -1,24 +1,23 @@
 const prisma = require("../lib/db");
-const verifyGoogleToken = require("../lib/google");
+const verifyPlayGamesToken = require("../lib/playgames");
 const { generateToken } = require("../lib/jwt");
 
-async function loginWithGoogle(idToken) {
-    const payload = await verifyGoogleToken(idToken);
+async function loginWithPlayGames(idToken) {
 
-    const googleId = payload.sub;
-    const email = payload.email;
-    const name = payload.name;
-    const avatarUrl = payload.picture;
+    const payload = await verifyPlayGamesToken(idToken);
+
+    const playerId = payload.sub;
+    const name = payload.name || payload.given_name || "Player";
+    const avatarUrl = payload.picture || null;
 
     let user = await prisma.user.findUnique({
-        where: { googleId },
+        where: { playerId },
     });
 
     if (!user) {
         user = await prisma.user.create({
             data: {
-                googleId,
-                email,
+                playerId,
                 name,
                 avatarUrl,
             },
@@ -29,9 +28,12 @@ async function loginWithGoogle(idToken) {
         });
     }
 
-    const token = generateToken(user);
+    const token = generateToken({
+        id: user.id,
+        playerId: user.playerId,
+    });
 
     return { user, token };
 }
 
-module.exports = { loginWithGoogle };
+module.exports = { loginWithPlayGames };
