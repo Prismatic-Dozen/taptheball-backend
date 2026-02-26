@@ -2,14 +2,21 @@ const leaderboardService = require("./leaderboard.service");
 
 exports.getLeaderboard = async (req, res) => {
     try {
-        const leaderboard = await leaderboardService.getTopLeaderboard();
+        const limit = parseInt(req.query.limit) || 10;
 
-        res.json({
+        const leaderboard = await leaderboardService.getTopLeaderboard(limit);
+
+        res.status(200).json({
             success: true,
+            count: leaderboard.length,
             data: leaderboard,
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to fetch leaderboard" });
+        console.error("Leaderboard Error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
     }
 };

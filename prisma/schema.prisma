@@ -8,21 +8,20 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  playerId   String   @unique
-  name       String?
-  avatarUrl  String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  playerId  String   @unique
+  name      String?  // From Play Games
+  avatarUrl String?
+  createdAt DateTime @default(now())
 
-  score      Score?
+  score     Score?
 }
 
 model Score {
   id        String   @id @default(uuid())
   userId    String   @unique
   highScore Int      @default(0)
-  lastScore Int      @default(0)
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
