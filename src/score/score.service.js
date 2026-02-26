@@ -1,6 +1,12 @@
 const prisma = require("../lib/db");
 
 exports.saveScore = async (userId, score) => {
+    const numericScore = Number(score);
+
+    if (isNaN(numericScore)) {
+        throw new Error("Invalid score value");
+    }
+
     const user = await prisma.user.findUnique({
         where: { id: userId },
     });
@@ -17,17 +23,19 @@ exports.saveScore = async (userId, score) => {
         return prisma.score.create({
             data: {
                 userId,
-                highScore: score,
-                lastScore: score,
+                highScore: numericScore,
             },
         });
     }
 
-    return prisma.score.update({
-        where: { userId },
-        data: {
-            lastScore: score,
-            highScore: Math.max(existingScore.highScore, score),
-        },
-    });
+    if (numericScore > existingScore.highScore) {
+        return prisma.score.update({
+            where: { userId },
+            data: {
+                highScore: numericScore,
+            },
+        });
+    }
+
+    return existingScore;
 };
